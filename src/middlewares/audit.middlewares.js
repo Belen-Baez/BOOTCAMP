@@ -10,4 +10,4 @@ const auditoriaMunicipal = (req , res, next) => {
 
 }
 
-module.exports = { auditoriaMunicipal };
+module.exports = auditoriaMunicipal;

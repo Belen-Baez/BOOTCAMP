@@ -7,4 +7,4 @@ const rutaNoEncontrada = (req, res, next) => {
     });
 }
 
-module.exports = { rutaNoEncontrada };
+module.exports = rutaNoEncontrada;
