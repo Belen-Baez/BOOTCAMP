@@ -1,5 +1,5 @@
 
-const auditoriaMunicipal = (req , res, next) => {
+const auditoriaMunicipal = (req, res, next) => {
     const horaActual = new Date().toLocaleTimeString();
     const metodo = req.method;
     const ruta = req.originalUrl;
@@ -8,6 +8,6 @@ const auditoriaMunicipal = (req , res, next) => {
 
     next();
 
-}
+};
 
 module.exports = auditoriaMunicipal;

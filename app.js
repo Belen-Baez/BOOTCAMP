@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 
-const auditMiddlewares = require('./src/middlewares/audit.middlewares');
+const auditMiddlewares = require('./src/middlewares/auditoria.middlewares');
 const errorHandlerMiddlewares = require('./src/middlewares/errorHandler.middlewares');
 const turnosRoutes = require('./src/routes/turnos.routes');
 
