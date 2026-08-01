@@ -38,14 +38,23 @@ app.post('/api/v1/turnos', (req, res) => {
 app.delete('/api/v1/turnos/:id', (req, res) => {
     const { id } = req.params;
     const turnoExiste = turnos.some(t=> t.id === parseInt(id)); 
-    
 
-    if (turnoExiste === -1) {
+    if (!turnoExiste) {
         return res.status(404).json({ error: 'Turno no encontrado' });
     }
 
-    turnos.splice(turnoExiste, 1);
-    res.status(200).json({ message: 'Turno eliminado correctamente' });
+      turnos = turnos.filter(t => t.id !== parseInt(id));
+      res.status(200).json({ message: 'Turno eliminado correctamente',  data: turnos });
+});
+
+app.get('/api/v1/turnos/:especialidad', (req, res) => {
+    const { especialidad } = req.params;
+    const turnosFiltrados = turnos.filter(t => t.especialidad.toLowerCase() === especialidad.toLowerCase());
+
+    if (turnosFiltrados.length === 0) {
+        return res.status(404).json({ error: `No se encontraron turnos para la especialidad: ${especialidad}` }); }
+
+    res.status(200).json({ total: turnosFiltrados.length, data: turnosFiltrados });
 });
 
  app.listen(PORT, () => {
