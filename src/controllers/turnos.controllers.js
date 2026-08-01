@@ -17,8 +17,32 @@ const respuestaEstandar = ( res, status, success, message, data = null) => {
 }
 
 const getTurnos = (req, res) => {
-   respuestaEstandar(res, 200, true, 'Turnos obtenidos correctamente', turnos);
-}
+    try {
+        const { especialidad } = req.query;
+
+        let resultados = turnos;
+
+        if (especialidad) {
+            // Limpia tildes y convierte a minúsculas
+            const busqueda = especialidad.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+            resultados = turnos.filter(t => {
+                const espTurno = t.especialidad.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                return espTurno.includes(busqueda);
+            });
+        }
+
+        return respuestaEstandar(
+            res, 
+            200, 
+            true, 
+            especialidad ? `Turnos filtrados por especialidad: ${especialidad}` : 'Turnos obtenidos correctamente', 
+            resultados
+        );
+    } catch (error) {
+        return respuestaEstandar(res, 500, false, 'Error al obtener los turnos', error.message);
+    }
+};
 
 const createTurno = (req, res) => {
     const { paciente, dni, especialidad } = req.body;
@@ -55,5 +79,7 @@ const deleteTurno = (req, res) => {
         return respuestaEstandar(res, 400, false, 'ID con formato invalido', error.message);
     }
 };
+
+
 
 module.exports = { getTurnos, createTurno, deleteTurno };
