@@ -38,23 +38,18 @@ const createTurno = (req, res) => {
    respuestaEstandar(res, 201, true, 'Turno creado correctamente', nuevoTurno);
 }
 
-const deleteTurno = async (req, res) => {
+const deleteTurno = (req, res) => {
     try {
-
         const { id } = req.params;
+        const turnoExiste = turnos.some(t => t.id === parseInt(id));
 
-        const turnoBorrado = await Turno.findByIdAndUpdate(
-            id, 
-            { activo: false },
-            { estado: 'cancelado' },
-            { new: true }
-        );
-
-        if (!turnoBorrado) {
-            return respuestaEstandar(res, 404, false, 'Turno no encontrado con ID ${id}');
+        if (!turnoExiste) {
+            return respuestaEstandar(res, 404, false, `Turno no encontrado con ID ${id}`);
         }
+
+        turnos = turnos.filter(t => t.id !== parseInt(id));
         
-        return respuestaEstandar(res, 200, true, 'Turno eliminado exitosamente', turnoBorrado);
+        return respuestaEstandar(res, 200, true, 'Turno eliminado exitosamente', turnos);
     } catch (error) {
         console.error('Error al eliminar el turno:', error);
         return respuestaEstandar(res, 400, false, 'ID con formato invalido', error.message);
