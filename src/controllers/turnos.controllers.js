@@ -1,3 +1,5 @@
+const Turno = require('../models/turnos');
+
 let turnos = [
     { id: 1, paciente: 'Fermin Perez', dni: '12345678', especialidad: 'Cardiología' },
     { id: 2, paciente: 'Maria Lopez', dni: '87654321', especialidad: 'Dermatología' },
@@ -43,23 +45,21 @@ const getTurnos = (req, res) => {
     }
 };
 
-const createTurno = (req, res) => {
-    const { paciente, dni, especialidad } = req.body;
+const createTurno = async(req, res) => {
+    try {
+        const nuevoTurno = await Turno.create(req.body);
+        return respuestaEstandar(res, 201, true, 'Turno creado correctamente', nuevoTurno);
 
-      if (!paciente || !dni || !especialidad) {
-         respuestaEstandar(res, 400, false, 'Faltan datos obligatorios');
-      }
+    } catch (error) {
 
-   const nuevoTurno = {
-      id: turnos.length + 1,
-      paciente,
-      dni,
-      especialidad
-   };
+        if (error.name === 'ValidationError') {
+            const errores = Object.values(error.errors).map(err => err.message);
+            return respuestaEstandar(res, 400, false, 'Error de validación', errores);
+        }
 
-   turnos.push(nuevoTurno);
-   respuestaEstandar(res, 201, true, 'Turno creado correctamente', nuevoTurno);
-}
+        return respuestaEstandar(res, 500, false, 'Error al crear el turno', error.message);
+    }
+};
 
 const deleteTurno = (req, res) => {
     try {
