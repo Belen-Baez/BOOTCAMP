@@ -1,13 +1,5 @@
 const Turno = require('../models/turnos');
 
-let turnos = [
-    { id: 1, paciente: 'Fermin Perez', dni: '12345678', especialidad: 'Cardiología' },
-    { id: 2, paciente: 'Maria Lopez', dni: '87654321', especialidad: 'Dermatología' },
-    { id: 3, paciente: 'Juan Martinez', dni: '11223344', especialidad: 'Pediatría' },
-    { id: 4, paciente: 'Ana Torres', dni: '55667788', especialidad: 'Neurología' },
-    { id: 5, paciente: 'Carlos Ramirez', dni: '99887766', especialidad: 'Ginecología' }
-]
-
 const respuestaEstandar = ( res, status, success, message, data = null) => {
     return res.status(status).json({ 
         success, 
@@ -18,30 +10,12 @@ const respuestaEstandar = ( res, status, success, message, data = null) => {
     });
 }
 
-const getTurnos = (req, res) => {
+const getTurnos = async (req, res) => {
     try {
-        const { especialidad } = req.query;
-
-        let resultados = turnos;
-
-        if (especialidad) {
-            const busqueda = especialidad.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-            resultados = turnos.filter(t => {
-                const espTurno = t.especialidad.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-                return espTurno.includes(busqueda);
-            });
-        }
-
-        return respuestaEstandar(
-            res, 
-            200, 
-            true, 
-            especialidad ? `Turnos filtrados por especialidad: ${especialidad}` : 'Turnos obtenidos correctamente', 
-            resultados
-        );
+        const turnos = await Turno.find({ activo: true }).populate('paciente');
+        return respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
     } catch (error) {
-        return respuestaEstandar(res, 500, false, 'Error al obtener los turnos', error.message);
+         return respuestaEstandar(res, 500, false, 'Error interno del servidor', error.message);
     }
 };
 
