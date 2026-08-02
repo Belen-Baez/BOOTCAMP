@@ -23,7 +23,6 @@ const getTurnos = (req, res) => {
         let resultados = turnos;
 
         if (especialidad) {
-            // Limpia tildes y convierte a minúsculas
             const busqueda = especialidad.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
             resultados = turnos.filter(t => {
