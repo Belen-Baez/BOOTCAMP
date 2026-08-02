@@ -51,4 +51,12 @@ turnoSchema.set('toJSON', {
     }
 });
 
+turnoSchema.set('toJSON', {
+    transform: (documento, turnoRetorno) => {
+        turnoRetorno.id = turnoRetorno._id;
+        delete turnoRetorno._id;
+        delete turnoRetorno.__v;
+    }
+});
+
 module.exports = mongoose.model('Turno', turnoSchema);
