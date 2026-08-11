@@ -1,4 +1,4 @@
-const Paciente = require('../models/Paciente');
+const Paciente = require('../models/paciente');
 const respuestaEstandar = require('../utils/respuestaEstandar');
 
 
