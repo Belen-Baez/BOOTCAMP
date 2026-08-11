@@ -19,20 +19,44 @@ const getTurnos = async (req, res) => {
     }
 };
 
-const createTurno = async(req, res) => {
+const createTurno = async (req, res) => {
     try {
-        const nuevoTurno = await Turno.create(req.body);
-        return respuestaEstandar(res, 201, true, 'Turno creado correctamente', nuevoTurno);
+
+        const origenPeticion = req.headers['x-origen'];
+        const tokenSeguridad = req.headers['authorization'];
+
+        console.log("📍 Peticion realizada desde:", origenPeticion);
+
+        if (tokenSeguridad != 'token123') {
+            return respuestaEstandar(res, 401, false, 'no tiene permisos');
+        }
+
+        const esUrgente = req.query.urgencia === 'true';
+
+        const datosDelTurno = {
+            paciente: req.body.paciente,
+            especialidad: req.body.especialidad,
+            fechaTurno: req.body.fechaTurno
+        };
+
+        if (esUrgente) {
+            datosDelTurno.estado = 'atendido';
+            datosDelTurno.observaciones = 'ingreso por guardia medica';
+            console.log("🚨 ALERTA: registrado un turno de urgencia");
+        }
+
+        const nuevoTurno = await Turno.create(datosDelTurno);
+        return respuestaEstandar(res, 201, true, 'Turno creado exitosamente', nuevoTurno);
 
     } catch (error) {
 
         if (error.name === 'ValidationError') {
             const errores = Object.values(error.errors).map(err => err.message);
             return respuestaEstandar(res, 400, false, 'Error de validación', errores);
-        }
-
-        return respuestaEstandar(res, 500, false, 'Error al crear el turno', error.message);
     }
+
+    return respuestaEstandar(res, 500, false, 'Error interno del servidor', error.message);
+  };
 };
 
 const deleteTurno = async (req, res) => {
