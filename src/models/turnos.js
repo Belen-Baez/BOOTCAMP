@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const turnoSchema = new mongoose.Schema({
     paciente: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Paciente',
     required: [true, 'El nombre del paciente es obligatorio'],
 },
     especialidad: {
@@ -23,7 +24,7 @@ const turnoSchema = new mongoose.Schema({
             message: 'La fecha del turno debe ser una fecha futura',
         },
     },
-    estado: {
+     estado: {
         type: String,
         enum: {
             values: ['pendiente', 'atendido', 'cancelado'],

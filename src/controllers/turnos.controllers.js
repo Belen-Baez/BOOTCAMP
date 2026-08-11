@@ -1,5 +1,4 @@
 const Turno = require('../models/turnos');
-const respuestaEstandar = require('../utils/respuestaEstandar');
 
 const respuestaEstandar = ( res, status, success, message, data = null) => {
     return res.status(status).json({ 
@@ -36,24 +35,28 @@ const createTurno = async(req, res) => {
     }
 };
 
-const deleteTurno = (req, res) => {
+const deleteTurno = async (req, res) => {
     try {
+
         const { id } = req.params;
-        const turnoExiste = turnos.some(t => t.id === parseInt(id));
 
-        if (!turnoExiste) {
-            return respuestaEstandar(res, 404, false, `Turno no encontrado con ID ${id}`);
+        const turnoBorrado = await Turno.findByIdAndUpdate(
+            id, 
+            { activo: false },
+            { estado: 'cancelado' },
+            { new: true }
+        );
+
+        if (!turnoBorrado) {
+            return respuestaEstandar(res, 404, false, 'Turno no encontrado con ID ${id}');
         }
-
-        turnos = turnos.filter(t => t.id !== parseInt(id));
         
-        return respuestaEstandar(res, 200, true, 'Turno eliminado exitosamente', turnos);
+        return respuestaEstandar(res, 200, true, 'Turno eliminado exitosamente', turnoBorrado);
     } catch (error) {
         console.error('Error al eliminar el turno:', error);
         return respuestaEstandar(res, 400, false, 'ID con formato invalido', error.message);
     }
 };
-
 
 
 module.exports = { getTurnos, createTurno, deleteTurno };
