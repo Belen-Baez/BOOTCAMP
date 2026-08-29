@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.DATABASE_URI);
+    const dbUri = process.env.DATABASE_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/tu_base_de_datos';
+
+    await mongoose.connect(dbUri);
   } catch (error) {
     console.error('🔴 Error al conectar a la base de datos 🔴:', error.message);
     process.exit(1);
@@ -13,8 +15,8 @@ mongoose.connection.on('connected', () => {
   console.log('🟢 Conexión a la base de datos establecida 🟢');
 });
 
-mongoose.connection.on('disconnected', (err) => {
-  console.error('🟡 Conexión a la base de datos perdida 🟡:', err.message);
+mongoose.connection.on('disconnected', () => {
+  console.error('🟡 Conexión a la base de datos perdida 🟡');
 });
 
 process.on('SIGINT', async () => {
