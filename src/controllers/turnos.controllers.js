@@ -12,11 +12,18 @@ const respuestaEstandar = (res, status, success, message, data = null) => {
 
 const getTurnos = async (req, res) => {
     try {
-      
-        const turnos = await Turno.find({ activo: { $ne: false } }).populate('paciente');
+        const { id } = req.query;
+    
+        if (id) {
+            const turnos = await Turno.findById(id).populate('paciente');
+            return respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
+        }
+           
+        const turnos = await Turno.find({activo: true}).populate('paciente');
+        
         return respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
     } catch (error) {
-        return respuestaEstandar(res, 500, false, 'Error interno del servidor', error.message);
+         return respuestaEstandar(res, 500, false, 'Error interno del servidor', error.message);
     }
 };
 
