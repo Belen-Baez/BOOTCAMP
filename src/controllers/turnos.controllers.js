@@ -15,26 +15,31 @@ const getTurnos = async (req, res) => {
         const { id } = req.query;
     
         if (id) {
-            const turnos = await Turno.findById(id).populate('paciente');
-            return respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
+            const turno = await Turno.findById(id).populate('paciente');
+            if (!turno) {
+                return respuestaEstandar(res, 404, false, 'Turno no encontrado');
+            }
+            return respuestaEstandar(res, 200, true, 'Turno obtenido exitosamente', turno);
         }
-           
-        const turnos = await Turno.find({activo: true}).populate('paciente');
+            
+        const turnos = await Turno.find({ activo: true }).populate('paciente');
         
         return respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
     } catch (error) {
-         return respuestaEstandar(res, 500, false, 'Error interno del servidor', error.message);
+        return respuestaEstandar(res, 500, false, 'Error interno del servidor', error.message);
     }
 };
 
 const createTurno = async (req, res) => {
     try {
         const origenPeticion = req.headers['x-origen'];
-        const tokenSeguridad = req.headers['authorization'];
+        const tokenHeader = req.headers['authorization'];
 
-        console.log("📍 Peticion realizada desde:", origenPeticion);
+        console.log("📍 Petición realizada desde:", origenPeticion);
 
-        if (tokenSeguridad !== 'token123') {
+        const tokenSeguridad = tokenHeader ? tokenHeader.replace('Bearer ', '').trim() : '';
+
+        if (!tokenSeguridad) {
             return respuestaEstandar(res, 401, false, 'no tiene permisos');
         }
 
@@ -55,7 +60,6 @@ const createTurno = async (req, res) => {
         }
 
         const nuevoTurno = await Turno.create(datosDelTurno);
-
         const turnoPoblado = await Turno.findById(nuevoTurno._id).populate('paciente');
 
         return respuestaEstandar(res, 201, true, 'Turno creado exitosamente', turnoPoblado);
@@ -87,7 +91,7 @@ const deleteTurno = async (req, res) => {
         return respuestaEstandar(res, 200, true, 'Turno eliminado exitosamente', turnoBorrado);
     } catch (error) {
         console.error('Error al eliminar el turno:', error);
-        return respuestaEstandar(res, 400, false, 'ID con formato invalido', error.message);
+        return respuestaEstandar(res, 400, false, 'ID con formato inválido', error.message);
     }
 };
 
@@ -101,8 +105,8 @@ const marcarAtendido = async (req, res) => {
             { new: true }
         );
 
-        if (!turnoActualizado) return respuestaEstandar(res, 404, false, 'turno no encontrado', id);
-        return respuestaEstandar(res, 200, true, 'turno actualizado', turnoActualizado);
+        if (!turnoActualizado) return respuestaEstandar(res, 404, false, 'Turno no encontrado', id);
+        return respuestaEstandar(res, 200, true, 'Turno actualizado', turnoActualizado);
     } catch (error) {
         return respuestaEstandar(res, 500, false, 'Error de servidor', error.message);
     }
