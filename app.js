@@ -11,11 +11,14 @@ const errorHandlerMiddlewares = require('./src/middlewares/errorHandler.middlewa
 const turnosRoutes = require('./src/routes/turnos.routes');
 const pacientesRoutes = require('./src/routes/paciente.routes');
 const recepcionRoutes = require('./src/routes/recepcion.routes');
+const authRoutes = require('./src/routes/auth.routes'); 
 
 app.use(express.json());
 app.use(auditMiddlewares);
 app.use(cors());
 
+// Rutas
+app.use('/api/auth', authRoutes); 
 app.use('/api/v1/turnos', turnosRoutes);
 app.use('/api/v1/pacientes', pacientesRoutes);
 app.use('/api/v1/recepcion', recepcionRoutes);
