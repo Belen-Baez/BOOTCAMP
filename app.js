@@ -17,15 +17,14 @@ app.use(express.json());
 app.use(auditMiddlewares);
 app.use(cors());
 
-// Rutas
 app.use('/api/auth', authRoutes); 
 app.use('/api/v1/turnos', turnosRoutes);
 app.use('/api/v1/pacientes', pacientesRoutes);
 app.use('/api/v1/recepcion', recepcionRoutes);
-app.use('/api/medicos', require('./src/routes/medico.routes'));
-app.use('/api/historias-clinicas', require('./src/routes/historiaClinica.routes'));
-app.use('/api/especialidades', require('./src/routes/especialidad.routes'));
-app.use('/api/consultorios', require('./src/routes/consultorio.routes'));
+app.use('/api/v1/medicos', require('./src/routes/medicos.routes'));
+app.use('/api/v1/historias-clinicas', require('./src/routes/historiaClinica.routes'));
+app.use('/api/v1/especialidades', require('./src/routes/especialidad.routes'));
+app.use('/api/v1/consultorios', require('./src/routes/consultorio.routes'));
 
 app.use(errorHandlerMiddlewares);
 
