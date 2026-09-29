@@ -1,8 +1,10 @@
 require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
+type Application = import('express').Application;
 const connectDB = require('./src/config/database');
-const app = express();
+
+const app: Application = express();
 
 connectDB();
 
