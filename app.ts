@@ -1,39 +1,37 @@
-require('dotenv').config();
-const cors = require('cors');
-const express = require('express');
-type Application = import('express').Application;
-const connectDB = require('./src/config/database');
+import type { Application } from 'express';
+
+import * as dotenv from "dotenv";
+dotenv.config();
+import cors from 'cors';
+import express from 'express';
+import { connectDB } from './src/config/database';
+
+const auditMiddleware = require('./src/middlewares/auditoria.middleware').default;
+const errorHandlerMiddleware = require('./src/middlewares/errorHandler.middleware').default;
+
+import turnosRoutes from './src/modules/turnos/turnos.routes';
+import pacientesRoutes from './src/modules/pacientes/paciente.routes';
+import recepcionRoutes from './src/modules/recepcion/recepcion.routes';
 
 const app: Application = express();
 
 connectDB();
 
-const auditMiddlewares = require('./src/middlewares/auditoria.middlewares');
-const errorHandlerMiddlewares = require('./src/middlewares/errorHandler.middlewares');
-const turnosRoutes = require('./src/routes/turnos.routes');
-const pacientesRoutes = require('./src/routes/paciente.routes');
-const recepcionRoutes = require('./src/routes/recepcion.routes');
-const authRoutes = require('./src/routes/auth.routes'); 
-
 app.use(express.json());
-app.use(auditMiddlewares);
+app.use(auditMiddleware);
 app.use(cors());
 
-app.use('/api/auth', authRoutes); 
 app.use('/api/v1/turnos', turnosRoutes);
 app.use('/api/v1/pacientes', pacientesRoutes);
 app.use('/api/v1/recepcion', recepcionRoutes);
-app.use('/api/v1/medicos', require('./src/routes/medicos.routes'));
-app.use('/api/v1/historias-clinicas', require('./src/routes/historiaClinica.routes'));
-app.use('/api/v1/especialidades', require('./src/routes/especialidad.routes'));
-app.use('/api/v1/consultorios', require('./src/routes/consultorio.routes'));
 
-app.use(errorHandlerMiddlewares);
+app.use(errorHandlerMiddleware);
 
-const PORT = process.env.PORT || 3000;
+const PORT: string | number = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     console.log(`===============================================`);
-    console.log(`.......SERVIDOR MUNICIPAL ACTIVO........`);
+    console.log(`============SERVIDOR MUNICIPAL ACTIVO==========`);
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
     console.log(`Entorno: ${process.env.ENTORNO || 'Local'} `);
     console.log(`===============================================`);

@@ -1,13 +1,8 @@
 import type { Request, Response } from 'express';
-import { EstadoTurno } from '../interfaces/turnos/TurnoEstado.enum';
-import Turno from '../models/turnos';
-import type {
-    ICrearTurnoDTO,
-    IQueryUrgencia,
-} from '../interfaces/turnos/Request/TurnoDTO';
-
+import { EstadoTurno } from './types/TurnoEstado.enum';
+import Turno from './Turnos.model';
+import type { CrearTurnoDTO, IQueryUrgencia } from './dtos/Turno.schema';
 const respuestaEstandar = require('../utils/respuestaEstandar');
-
 
 const getTurnos = async (req: Request<unknown, unknown, unknown, { id?: string}>, res: Response) => {
     try {
@@ -26,7 +21,7 @@ const getTurnos = async (req: Request<unknown, unknown, unknown, { id?: string}>
     }
 };
 
-const createTurno = async (req: Request<unknown, unknown, ICrearTurnoDTO, IQueryUrgencia>, res: Response) => {
+const createTurno = async (req: Request<unknown, unknown, CrearTurnoDTO, IQueryUrgencia>, res: Response) => {
     try {
 
         const esUrgente = req.query.urgencia === 'true';

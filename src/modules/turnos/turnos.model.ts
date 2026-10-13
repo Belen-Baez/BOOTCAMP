@@ -1,8 +1,7 @@
-
-import { Schema, model, Document} from 'mongoose';
-import { ITurno } from '../interfaces/turnos/Turno.interface';
-import { Especialidad } from '../interfaces/turnos/TurnoEspecialidad.enum';
-import { EstadoTurno } from '../interfaces/turnos/TurnoEstado.enum';
+import { Schema, model, Document } from 'mongoose';
+import type { ITurno } from "./types/Turno.interface";
+import { Especialidad } from './types/TurnoEspecialidad.enum';
+import { EstadoTurno } from './types/TurnoEstado.enum';
 
 const turnoSchema = new Schema<ITurno>({
     paciente: {
@@ -22,7 +21,7 @@ const turnoSchema = new Schema<ITurno>({
         type: Date,
         required: [true, 'La fecha del turno es obligatoria'],
         validate: {
-            validator: function (value: Date) {
+            validator: function(value: Date) {
                 return value >= new Date();
             },
             message: 'La fecha del turno debe ser una fecha futura',
@@ -37,18 +36,15 @@ const turnoSchema = new Schema<ITurno>({
     },
     observaciones: {
         type: String,
-        maxlength: [
-            500,
-            'Las observaciones no pueden superar los 500 caracteres',
-        ],
+        maxlength: [500, 'Las observaciones no pueden superar los 500 caracteres'],
     },
     activo: {
         type: Boolean,
         default: true,
-        select: false,
-    },
+        select: false
+    }
 }, {
-    timestamps: true,
+        timestamps: true,
 });
 
 turnoSchema.set('toJSON', {
@@ -56,7 +52,7 @@ turnoSchema.set('toJSON', {
         turnoRetorno.id = turnoRetorno._id;
         delete turnoRetorno._id;
         delete turnoRetorno.__v;
-    },
+    }
 });
 
 const TurnoModel = model<ITurno>('Turno', turnoSchema);
